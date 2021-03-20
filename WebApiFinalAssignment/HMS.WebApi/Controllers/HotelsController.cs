@@ -1,11 +1,7 @@
 ﻿using System;
-using System.Net;
-using System.Net.Http;
-using System.Text;
 using System.Web.Http;
 using HMS.BLL.HotelManager;
 using HMS.Models;
-using Newtonsoft.Json;
 
 namespace HMS.WebApi.Controllers
 {
@@ -20,71 +16,46 @@ namespace HMS.WebApi.Controllers
         }
 
         [Route("")]
-        public HttpResponseMessage Get()
+        public IHttpActionResult Get()
         {
             try
             {
                 var hotels = _hotelManager.GetAllHotel();
-
-                return new HttpResponseMessage(HttpStatusCode.OK)
-                {
-                    Content = new StringContent(JsonConvert.SerializeObject(hotels),
-                        Encoding.UTF8, "application/json")
-                };
+                return Ok(hotels);
             }
             catch (Exception e)
             {
-                return new HttpResponseMessage(HttpStatusCode.InternalServerError)
-                {
-                    Content = new StringContent(JsonConvert.SerializeObject(new {message = e.Message}),
-                        Encoding.UTF8, "application/json")
-                };
+                return InternalServerError(e);
             }
         }
 
         [Route("{id:int}")]
-        public HttpResponseMessage Get(int id)
+        public IHttpActionResult Get(int id)
         {
             try
             {
                 var hotel = _hotelManager.GetHotel(id);
-
-                return new HttpResponseMessage(HttpStatusCode.OK)
-                {
-                    Content = new StringContent(JsonConvert.SerializeObject(hotel),
-                        Encoding.UTF8, "application/json")
-                };
+                return Ok(hotel);
             }
             catch (Exception e)
             {
-                return new HttpResponseMessage(HttpStatusCode.BadRequest)
-                {
-                    Content = new StringContent(JsonConvert.SerializeObject(new {message = e.Message}),
-                        Encoding.UTF8, "application/json")
-                };
+                return InternalServerError(e);
             }
         }
 
-        [Route("")]
-        public HttpResponseMessage Post([FromBody] Hotel model)
+        public IHttpActionResult Post([FromBody] Hotel model)
         {
+            if (model == null || !ModelState.IsValid)
+                return BadRequest();
+
             try
             {
                 var hotel = _hotelManager.CreateHotel(model);
-
-                return new HttpResponseMessage(HttpStatusCode.Created)
-                {
-                    Content = new StringContent(JsonConvert.SerializeObject(hotel),
-                        Encoding.UTF8, "application/json")
-                };
+                return Created("successful", hotel);
             }
             catch (Exception e)
             {
-                return new HttpResponseMessage(HttpStatusCode.BadRequest)
-                {
-                    Content = new StringContent(JsonConvert.SerializeObject(new {message = e.Message}),
-                        Encoding.UTF8, "application/json")
-                };
+                return InternalServerError(e);
             }
         }
     }

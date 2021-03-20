@@ -12,7 +12,7 @@ namespace HMS.Models
 
     public class Booking
     {
-        public int Id { get; set; }
+        public int? Id { get; set; }
         public DateTime BookingDate { get; set; }
         public int RoomId { get; set; }
         public BookingStatus BookingStatus { get; set; }

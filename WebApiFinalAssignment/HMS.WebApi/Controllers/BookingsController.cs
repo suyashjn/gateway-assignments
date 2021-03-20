@@ -1,11 +1,7 @@
 ﻿using System;
-using System.Net;
-using System.Net.Http;
-using System.Text;
 using System.Web.Http;
 using HMS.BLL.BookingManager;
 using HMS.Models;
-using Newtonsoft.Json;
 
 namespace HMS.WebApi.Controllers
 {
@@ -20,71 +16,47 @@ namespace HMS.WebApi.Controllers
         }
 
         [Route("")]
-        public HttpResponseMessage Post([FromBody] Booking model)
+        public IHttpActionResult Post([FromBody] Booking model)
         {
+            if (model == null)
+                return BadRequest();
+
             try
             {
                 var booking = _bookingManager.CreateBooking(model);
-
-                return new HttpResponseMessage(HttpStatusCode.Created)
-                {
-                    Content = new StringContent(JsonConvert.SerializeObject(booking),
-                        Encoding.UTF8, "application/json")
-                };
+                return Created("Successful", booking);
             }
             catch (Exception e)
             {
-                return new HttpResponseMessage(HttpStatusCode.BadRequest)
-                {
-                    Content = new StringContent(JsonConvert.SerializeObject(new {message = e.Message}),
-                        Encoding.UTF8, "application/json")
-                };
+                return InternalServerError(e);
             }
         }
 
         [Route("{id:int}")]
-        public HttpResponseMessage Put(int id, [FromBody] Booking model)
+        public IHttpActionResult Put(int id, [FromBody] Booking model)
         {
             try
             {
                 var booking = _bookingManager.UpdateBooking(id, model);
-
-                return new HttpResponseMessage(HttpStatusCode.OK)
-                {
-                    Content = new StringContent(JsonConvert.SerializeObject(booking),
-                        Encoding.UTF8, "application/json")
-                };
+                return Ok(booking);
             }
             catch (Exception e)
             {
-                return new HttpResponseMessage(HttpStatusCode.BadRequest)
-                {
-                    Content = new StringContent(JsonConvert.SerializeObject(new {message = e.Message}),
-                        Encoding.UTF8, "application/json")
-                };
+                return InternalServerError(e);
             }
         }
 
         [Route("{id:int}")]
-        public HttpResponseMessage Delete(int id)
+        public IHttpActionResult Delete(int id)
         {
             try
             {
                 var booking = _bookingManager.DeleteBooking(id);
-
-                return new HttpResponseMessage(HttpStatusCode.OK)
-                {
-                    Content = new StringContent(JsonConvert.SerializeObject(booking),
-                        Encoding.UTF8, "application/json")
-                };
+                return Ok("delete successful");
             }
             catch (Exception e)
             {
-                return new HttpResponseMessage(HttpStatusCode.BadRequest)
-                {
-                    Content = new StringContent(JsonConvert.SerializeObject(new {message = e.Message}),
-                        Encoding.UTF8, "application/json")
-                };
+               return InternalServerError(e);
             }
         }
     }
