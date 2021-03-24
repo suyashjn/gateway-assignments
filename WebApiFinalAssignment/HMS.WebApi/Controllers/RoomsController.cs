@@ -1,11 +1,7 @@
 ﻿using System;
-using System.Net;
-using System.Net.Http;
-using System.Text;
 using System.Web.Http;
 using HMS.BLL.RoomManager;
 using HMS.Models;
-using Newtonsoft.Json;
 
 namespace HMS.WebApi.Controllers
 {
@@ -20,71 +16,47 @@ namespace HMS.WebApi.Controllers
         }
 
         [Route("")]
-        public HttpResponseMessage Get(string city, int? pinCode, decimal? price, RoomCategory? roomCategory)
+        public IHttpActionResult Get(string city, int? pinCode, decimal? price, RoomCategory? roomCategory)
         {
             try
             {
                 var rooms = _roomManager.GetAllRoom(city, pinCode, price, roomCategory);
-
-                return new HttpResponseMessage(HttpStatusCode.OK)
-                {
-                    Content = new StringContent(JsonConvert.SerializeObject(rooms),
-                        Encoding.UTF8, "application/json")
-                };
+                return Ok(rooms);
             }
             catch (Exception e)
             {
-                return new HttpResponseMessage(HttpStatusCode.InternalServerError)
-                {
-                    Content = new StringContent(JsonConvert.SerializeObject(new {message = e.Message}),
-                        Encoding.UTF8, "application/json")
-                };
+                return InternalServerError(e);
             }
         }
 
         [Route("{id:int}/availability")]
-        public HttpResponseMessage GetAvailability(int id, DateTime date)
+        public IHttpActionResult GetAvailability(int id, DateTime date)
         {
             try
             {
                 var availability = _roomManager.GetRoomAvailability(id, date);
-
-                return new HttpResponseMessage(HttpStatusCode.OK)
-                {
-                    Content = new StringContent(JsonConvert.SerializeObject(new {availability}),
-                        Encoding.UTF8, "application/json")
-                };
+                return Ok(availability);
             }
             catch (Exception e)
             {
-                return new HttpResponseMessage(HttpStatusCode.BadRequest)
-                {
-                    Content = new StringContent(JsonConvert.SerializeObject(new {message = e.Message}),
-                        Encoding.UTF8, "application/json")
-                };
+                return InternalServerError(e);
             }
         }
 
         [Route("")]
-        public HttpResponseMessage Post([FromBody] Room model)
+        public IHttpActionResult Post([FromBody] Room model)
         {
+            if (model == null || !ModelState.IsValid)
+                return BadRequest();
+
             try
             {
                 var room = _roomManager.CreateRoom(model);
-
-                return new HttpResponseMessage(HttpStatusCode.Created)
-                {
-                    Content = new StringContent(JsonConvert.SerializeObject(room),
-                        Encoding.UTF8, "application/json")
-                };
+                return Created("Successful", room);
             }
             catch (Exception e)
             {
-                return new HttpResponseMessage(HttpStatusCode.BadRequest)
-                {
-                    Content = new StringContent(JsonConvert.SerializeObject(new {message = e.Message}),
-                        Encoding.UTF8, "application/json")
-                };
+                return InternalServerError(e);
             }
         }
     }
