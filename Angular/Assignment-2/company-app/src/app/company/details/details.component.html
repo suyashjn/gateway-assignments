@@ -1,0 +1,70 @@
+<div class="card my-4">
+  <div class="card-header">
+    <i class="fas fa-table mr-1"></i>
+    Company Details
+  </div>
+  <div class="card-body">
+    <div class="table-responsive">
+      <table class="table table-bordered" width="100%" cellspacing="0">
+        <tbody>
+          <tr>
+            <td>Id</td>
+            <td>{{ company.id }}</td>
+          </tr>
+          <tr>
+            <td>Email</td>
+            <td>{{ company.email }}</td>
+          </tr>
+          <tr>
+            <td>Name</td>
+            <td>{{ company.name }}</td>
+          </tr>
+          <tr>
+            <td>Address</td>
+            <td>{{ company.address }}</td>
+          </tr>
+          <tr>
+            <td>Employee</td>
+            <td>{{ company.totalEmployee }}</td>
+          </tr>
+          <tr>
+            <td>Total branch</td>
+            <td>{{ company.totalBranch }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+<div class="card mb-4">
+  <div class="card-header">
+    <i class="fas fa-table mr-1"></i>
+    Its branch Details
+  </div>
+  <div class="card-body">
+    <div class="table-responsive" *ngFor="let branch of company.companyBranch">
+      <table class="table table-bordered" width="100%" cellspacing="0">
+        <caption style="caption-side: top">
+          Branch
+          {{
+            branch.branchId
+          }}
+        </caption>
+        <tbody>
+          <tr>
+            <td>Branch Id</td>
+            <td>{{ branch.branchId }}</td>
+          </tr>
+          <tr>
+            <td>Branch Name</td>
+            <td>{{ branch.branchName }}</td>
+          </tr>
+          <tr>
+            <td>Address</td>
+            <td>{{ branch.address }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
