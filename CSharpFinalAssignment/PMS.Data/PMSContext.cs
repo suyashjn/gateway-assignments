@@ -1,11 +1,11 @@
-﻿using System.Data.Entity;
-using PMS.Data.Models;
+﻿using PMS.Data.Models;
+using System.Data.Entity;
 
 namespace PMS.Data
 {
     public class PMSContext: DbContext
     {
-        public PMSContext() : base("HMSEntities")
+        public PMSContext() : base("PMSEntities")
         {
         }
 
